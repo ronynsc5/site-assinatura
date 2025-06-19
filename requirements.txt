@@ -1,0 +1,5 @@
+Flask
+Flask_SQLAlchemy
+Flask_Login
+mercadopago
+python-dotenv
