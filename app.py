@@ -5,7 +5,7 @@ import mercadopago
 import os
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY') or 'sua-chave-secreta-aqui'
+app.secret_key = os.environ.get('SECRET_KEY')  # <- Pega do ambiente
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usuarios.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -14,7 +14,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-sdk = mercadopago.SDK("TEST-2784550344932618-061820-cb25114851f80671be637dd25f6f7c07-181509504")
+# Usa token seguro vindo das variáveis de ambiente
+sdk = mercadopago.SDK(os.environ.get("MERCADO_PAGO_TOKEN"))
 
 class Usuario(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -81,7 +82,7 @@ def area_premium():
 @app.route("/comprar")
 @login_required
 def comprar():
-    base_url = "https://seu-endereco-ngrok.ngrok.io"  # Troque pela URL real do ngrok
+    base_url = request.host_url.rstrip('/')
 
     preference_data = {
         "items": [{
